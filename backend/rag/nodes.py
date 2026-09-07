@@ -4,66 +4,66 @@
 # nodes: router → retrieve → grade → generate / rewrite
 
 import os
-# os.environ["OLLAMA_NUM_THREAD"] = "8"
+os.environ["OLLAMA_NUM_THREAD"] = "8"
 
 from langchain_core.messages import HumanMessage, SystemMessage
-# from langchain_ollama import ChatOllama
-from langchain_groq import ChatGroq
+from langchain_ollama import ChatOllama
+# from langchain_groq import ChatGroq
 from rag.agent_state import AgentState
 from rag.vectorstore import FaissVectorStore
 from rag.data_loader import load_all_documents
-# from config import OLLAMA_BASE_URL, OLLAMA_MODEL, FAISS_STORE_PATH, DATA_PATH
-from config import GROQ_API_KEY, FAISS_STORE_PATH, DATA_PATH
+from config import OLLAMA_BASE_URL, OLLAMA_MODEL, FAISS_STORE_PATH, DATA_PATH
+# from config import GROQ_API_KEY, FAISS_STORE_PATH, DATA_PATH
 
-# print(f"[INFO] Initializing Ollama LLMs...")
-print(f"[INFO] Initializing Groq LLMs...")
+print(f"[INFO] Initializing Ollama LLMs...")
+# print(f"[INFO] Initializing Groq LLMs...")
 
 # fast_llm — for routing, grading, rewriting
 # low token limit = instant decisions
-# fast_llm = ChatOllama(
-#     base_url=OLLAMA_BASE_URL,
-#     model="llama3.2:1b",     # ← much smaller/faster
-#     temperature=0,           # deterministic — yes/no decisions
-#     num_predict=64,          # only needs short answers
-#     num_ctx=1024,            # small context = fast
-#     top_k=10,
-# )
-fast_llm = ChatGroq(
-    api_key=GROQ_API_KEY,
-    model="openai/gpt-oss-120b",
-    temperature=0,
-    max_tokens=96,
-    reasoning_effort="low",
-    reasoning_format="hidden",
+fast_llm = ChatOllama(
+    base_url=OLLAMA_BASE_URL,
+    model="llama3.2:1b",     # ← much smaller/faster
+    temperature=0,           # deterministic — yes/no decisions
+    num_predict=64,          # only needs short answers
+    num_ctx=1024,            # small context = fast
+    top_k=10,
 )
+# fast_llm = ChatGroq(
+#     api_key=GROQ_API_KEY,
+#     model="openai/gpt-oss-120b",
+#     temperature=0,
+#     max_tokens=96,
+#     reasoning_effort="low",
+#     reasoning_format="hidden",
+# )
 
 # main_llm — for final answer generation only
 # higher quality, more tokens
-# main_llm = ChatOllama(
-#     base_url=OLLAMA_BASE_URL,
-#     model=OLLAMA_MODEL,
-#     temperature=0.1,
-#     num_predict=1024,        # full answers
-#     num_ctx=4096,            # full context
-#     top_k=20,
-#     top_p=0.9,
-#     repeat_penalty=1.1,
-#     num_thread=8,             # ← use all CPU cores
-# )
-main_llm = ChatGroq(
-    api_key=GROQ_API_KEY,
-    model="openai/gpt-oss-120b",
+main_llm = ChatOllama(
+    base_url=OLLAMA_BASE_URL,
+    model=OLLAMA_MODEL,
     temperature=0.1,
-    max_tokens=2048,
-    reasoning_effort="medium",
-    reasoning_format="hidden",
+    num_predict=1024,        # full answers
+    num_ctx=4096,            # full context
+    top_k=20,
+    top_p=0.9,
+    repeat_penalty=1.1,
+    num_thread=8,             # ← use all CPU cores
 )
+# main_llm = ChatGroq(
+#     api_key=GROQ_API_KEY,
+#     model="openai/gpt-oss-120b",
+#     temperature=0.1,
+#     max_tokens=2048,
+#     reasoning_effort="medium",
+#     reasoning_format="hidden",
+# )
 
 # backward compat — keep llm for quiz/planner imports
 llm = main_llm
 
-# print(f"[INFO] Ollama LLMs ready — fast_llm + main_llm")
-print(f"[INFO] Groq LLMs ready — fast_llm + main_llm")
+print(f"[INFO] Ollama LLMs ready — fast_llm + main_llm")
+# print(f"[INFO] Groq LLMs ready — fast_llm + main_llm")
 
 print("[INFO] Initializing FAISS vector store...")
 vector_store = FaissVectorStore(persist_dir=FAISS_STORE_PATH)

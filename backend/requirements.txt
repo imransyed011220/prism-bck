@@ -29,3 +29,15 @@ pdfplumber
 
 # ── Other Document Loaders ─────────────────
 docx2txt
+
+# ── Database & APIs ────────────────────────
+motor
+pymongo
+python-multipart
+
+# ── Image / OCR ────────────────────────────
+pytesseract
+pdf2image
+
+# ── Sockets / Realtime ─────────────────────
+python-socketio
