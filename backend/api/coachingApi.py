@@ -193,14 +193,21 @@ def get_curated_centers(city_name: str, user_lat: float, user_lon: float) -> lis
     for known_city, data in MAJOR_COACHING_CITIES.items():
         if known_city in city_lower or city_lower in known_city:
             centers = []
-            for c in data["known_centers"]:
-                dist = haversine(user_lat, user_lon, data["lat"], data["lon"])
+            # Spread markers in a small circle around city center so they're visible
+            offsets = [
+                (0.000, 0.000), (0.008, 0.005), (-0.006, 0.008),
+                (0.004, -0.009), (-0.009, -0.004), (0.010, 0.010),
+                (-0.007, 0.011), (0.012, -0.006),
+            ]
+            for idx, c in enumerate(data["known_centers"]):
+                dlat, dlon = offsets[idx % len(offsets)]
+                dist = haversine(user_lat, user_lon, data["lat"] + dlat, data["lon"] + dlon)
                 centers.append({
                     **c,
                     "distance": dist,
                     "distanceStr": f"~{dist} km (approx)",
-                    "lat": data["lat"] + (len(centers) * 0.002),  # slight offset for map
-                    "lon": data["lon"] + (len(centers) * 0.002),
+                    "lat": data["lat"] + dlat,
+                    "lon": data["lon"] + dlon,
                     "phone": "",
                     "website": "",
                     "source": "curated"
