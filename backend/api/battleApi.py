@@ -740,6 +740,14 @@ async def getRoom(roomId: str):
     return {"message": "room", "payload": room}
 
 
+@battleRouter.get("/battle/room/{roomId}/state")
+async def getBattleRoomState(roomId: str):
+    """Return the persisted room state for clients using separate backend processes."""
+    db = get_battle_db()
+    room = await db.battle_rooms.find_one({"roomId": roomId}, {"_id": 0})
+    return {"message": "room state", "payload": room}
+
+
 @battleRouter.get("/battle/rooms/active/{userId}")
 async def getActiveBattleRoom(userId: str):
     """Get the currently active/waiting room for a user to restore state."""
