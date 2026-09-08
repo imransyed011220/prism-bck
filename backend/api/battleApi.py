@@ -162,6 +162,9 @@ def register_battle_events(sio):
             "roomId": room_id
         }, room=f"battle_{room_id}")
 
+        # personal confirmation so the joining client can transition without socket.once race
+        await sio.emit("join_result", {"success": True, "room": updated_room}, to=sid)
+
         print(f"[Battle] {user_id} joined room {room_id}")
 
 
